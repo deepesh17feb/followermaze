@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %boldGreen(%d{dd-MM-yyyy HH:mm:ss.SSS}) %cyan([%level]) %red([%thread]) %boldYellow([%logger{15}.%M:%line]) : %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <property name="HOME_LOG" value="/data/logs/cs.log"/>
+    <appender name="FILEOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${HOME_LOG}</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>/data/logs/archived/cs.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- each archived file, size max 10MB -->
+            <maxFileSize>1GB</maxFileSize>
+            <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+            <totalSizeCap>20GB</totalSizeCap>
+            <!-- 60 days to keep -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>
+                %boldGreen(%d{dd-MM-yyyy HH:mm:ss.SSS}) %cyan([%level]) %red([%thread]) %boldYellow([%logger{15}.%M:%line]) : %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.apache.kafka" level="error" additivity="false">
+        <appender-ref ref="FILEOUT" />
+    </logger>
+
+    <logger name="UI_THREAD" level="info" additivity="false">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILEOUT" />
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="FILEOUT"/>
+    </root>
+</configuration>
